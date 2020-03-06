@@ -47,7 +47,7 @@ func main() {
 	// with the cdc
 
 	rootCmd := &cobra.Command{
-		Use:   "acli",
+		Use:   "sbcli",
 		Short: "Command line interface for interacting with appd",
 	}
 
