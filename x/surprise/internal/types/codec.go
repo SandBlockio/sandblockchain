@@ -6,7 +6,10 @@ import (
 
 // RegisterCodec registers concrete types on codec
 func RegisterCodec(cdc *codec.Codec) {
-	// TODO: Register the modules msgs
+	cdc.RegisterConcrete(MsgCreateBrandedToken{}, "surprise/CreateBrandedToken", nil)
+	cdc.RegisterConcrete(MsgTransferBrandedTokenOwnership{}, "surprise/TransferBrandedTokenOwnership", nil)
+	cdc.RegisterConcrete(MsgBurnBrandedToken{}, "surprise/BurnBrandedToken", nil)
+	cdc.RegisterConcrete(MsgMintBrandedToken{}, "surprise/MintBrandedToken", nil)
 }
 
 // ModuleCdc defines the module codec
