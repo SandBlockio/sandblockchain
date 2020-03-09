@@ -14,7 +14,7 @@ const MsgBurnBrandedTokenConst = "BurnBrandedToken"
 type MsgCreateBrandedToken struct {
 	Name          string         `json:"name"`
 	InitialSupply sdk.Int        `json:"supply"`
-	Creator       sdk.AccAddress `json:"creator"`
+	FromAddress   sdk.AccAddress `json:"from_address"`
 }
 
 var _ sdk.Msg = &MsgCreateBrandedToken{}
@@ -23,21 +23,21 @@ func NewMsgCreateBrandedToken(name string, supply sdk.Int, creator sdk.AccAddres
 	return MsgCreateBrandedToken{
 		Name:          name,
 		InitialSupply: supply,
-		Creator:       creator,
+		FromAddress:   creator,
 	}
 }
 
 func (msg MsgCreateBrandedToken) Route() string { return RouterKey }
 func (msg MsgCreateBrandedToken) Type() string  { return CreateBrandedTokenConst }
 func (msg MsgCreateBrandedToken) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.AccAddress(msg.Creator)}
+	return []sdk.AccAddress{sdk.AccAddress(msg.FromAddress)}
 }
 func (msg MsgCreateBrandedToken) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 func (msg MsgCreateBrandedToken) ValidateBasic() error {
-	if msg.Creator.Empty() {
+	if msg.FromAddress.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "creator can't be empty")
 	}
 	if len(msg.Name) <= 0 {
@@ -51,18 +51,18 @@ func (msg MsgCreateBrandedToken) ValidateBasic() error {
 
 // MsgTransferBrandedTokenOwnership
 type MsgTransferBrandedTokenOwnership struct {
-	Name          string         `json:"name"`
-	PreviousOwner sdk.AccAddress `json:"previous_owner"`
-	NewOwner      sdk.AccAddress `json:"new_owner"`
+	Name        string         `json:"name"`
+	FromAddress sdk.AccAddress `json:"from_address"`
+	NewOwner    sdk.AccAddress `json:"new_owner"`
 }
 
 var _ sdk.Msg = &MsgTransferBrandedTokenOwnership{}
 
 func NewMsgTransferBrandedTokenOwnership(name string, previousOwner sdk.AccAddress, newOwner sdk.AccAddress) MsgTransferBrandedTokenOwnership {
 	return MsgTransferBrandedTokenOwnership{
-		Name:          name,
-		PreviousOwner: previousOwner,
-		NewOwner:      newOwner,
+		Name:        name,
+		FromAddress: previousOwner,
+		NewOwner:    newOwner,
 	}
 }
 
@@ -71,7 +71,7 @@ func (msg MsgTransferBrandedTokenOwnership) Type() string {
 	return MsgTransferBrandedTokenOwnershipConst
 }
 func (msg MsgTransferBrandedTokenOwnership) ValidateBasic() error {
-	if msg.PreviousOwner.Empty() {
+	if msg.FromAddress.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "previous_owner can't be empty")
 	}
 	if msg.NewOwner.Empty() {
@@ -83,7 +83,7 @@ func (msg MsgTransferBrandedTokenOwnership) ValidateBasic() error {
 	return nil
 }
 func (msg MsgTransferBrandedTokenOwnership) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.AccAddress(msg.PreviousOwner)}
+	return []sdk.AccAddress{sdk.AccAddress(msg.FromAddress)}
 }
 func (msg MsgTransferBrandedTokenOwnership) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
@@ -92,25 +92,25 @@ func (msg MsgTransferBrandedTokenOwnership) GetSignBytes() []byte {
 
 // MsgMintBrandedToken
 type MsgMintBrandedToken struct {
-	Owner  sdk.AccAddress `json:"owner"`
-	Name   string         `json:"name"`
-	Amount sdk.Int        `json:"amount"`
+	FromAddress sdk.AccAddress `json:"from_address"`
+	Name        string         `json:"name"`
+	Amount      sdk.Int        `json:"amount"`
 }
 
 var _ sdk.Msg = &MsgMintBrandedToken{}
 
 func NewMsgBrandedTokenMint(owner sdk.AccAddress, name string, amount sdk.Int) MsgMintBrandedToken {
 	return MsgMintBrandedToken{
-		Owner:  owner,
-		Name:   name,
-		Amount: amount,
+		FromAddress: owner,
+		Name:        name,
+		Amount:      amount,
 	}
 }
 
 func (msg MsgMintBrandedToken) Route() string { return RouterKey }
 func (msg MsgMintBrandedToken) Type() string  { return MsgMintBrandedTokenConst }
 func (msg MsgMintBrandedToken) ValidateBasic() error {
-	if msg.Owner.Empty() {
+	if msg.FromAddress.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "owner can't be empty")
 	}
 	if len(msg.Name) <= 0 {
@@ -125,30 +125,30 @@ func (msg MsgMintBrandedToken) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 func (msg MsgMintBrandedToken) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Owner}
+	return []sdk.AccAddress{msg.FromAddress}
 }
 
 // MsgBurnBrandedToken
 type MsgBurnBrandedToken struct {
-	Owner  sdk.AccAddress `json:"owner"`
-	Name   string         `json:"name"`
-	Amount sdk.Int        `json:"amount"`
+	FromAddress sdk.AccAddress `json:"from_address"`
+	Name        string         `json:"name"`
+	Amount      sdk.Int        `json:"amount"`
 }
 
 var _ sdk.Msg = &MsgBurnBrandedToken{}
 
 func NewMsgBurnBrandedToken(owner sdk.AccAddress, name string, amount sdk.Int) MsgBurnBrandedToken {
 	return MsgBurnBrandedToken{
-		Owner:  owner,
-		Name:   name,
-		Amount: amount,
+		FromAddress: owner,
+		Name:        name,
+		Amount:      amount,
 	}
 }
 
 func (msg MsgBurnBrandedToken) Route() string { return RouterKey }
 func (msg MsgBurnBrandedToken) Type() string  { return MsgBurnBrandedTokenConst }
 func (msg MsgBurnBrandedToken) ValidateBasic() error {
-	if msg.Owner.Empty() {
+	if msg.FromAddress.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "owner can't be empty")
 	}
 	if len(msg.Name) <= 0 {
@@ -163,5 +163,5 @@ func (msg MsgBurnBrandedToken) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 func (msg MsgBurnBrandedToken) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Owner}
+	return []sdk.AccAddress{msg.FromAddress}
 }

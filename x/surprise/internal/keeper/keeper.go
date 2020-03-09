@@ -13,7 +13,7 @@ import (
 
 // Keeper of the surprise store
 type Keeper struct {
-	coinKeeper bank.Keeper
+	CoinKeeper bank.Keeper
 	storeKey   sdk.StoreKey
 	cdc        *codec.Codec
 	paramspace types.ParamSubspace
@@ -22,7 +22,7 @@ type Keeper struct {
 // NewKeeper creates a surprise keeper
 func NewKeeper(coinKeeper bank.Keeper, cdc *codec.Codec, key sdk.StoreKey, paramspace types.ParamSubspace) Keeper {
 	keeper := Keeper{
-		coinKeeper: coinKeeper,
+		CoinKeeper: coinKeeper,
 		storeKey:   key,
 		cdc:        cdc,
 		paramspace: paramspace.WithKeyTable(types.ParamKeyTable()),
