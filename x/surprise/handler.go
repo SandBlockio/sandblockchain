@@ -49,7 +49,7 @@ func handleMsgCreateBrandedToken(ctx sdk.Context, k Keeper, msg types.MsgCreateB
 	k.SetBrandedToken(ctx, tokenSlug, newBrandedToken)
 
 	// Add the coin to the coin keeper
-	_, err = k.CoinKeeper.AddCoins(ctx, newBrandedToken.GetOwner(), sdk.NewCoins(newBrandedToken.Coin))
+	_, err := k.CoinKeeper.AddCoins(ctx, newBrandedToken.GetOwner(), sdk.NewCoins(newBrandedToken.Coin))
 	if err != nil {
 		// Delete the persisted coin and return
 		k.DeleteBrandedToken(ctx, tokenSlug)
