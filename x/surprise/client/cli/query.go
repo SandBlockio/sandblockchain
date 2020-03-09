@@ -69,7 +69,7 @@ func GetCmdGetBrandedToken(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out types.QueryResFetch
+			var out types.BrandedToken
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

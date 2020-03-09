@@ -38,7 +38,7 @@ func (msg MsgCreateBrandedToken) GetSignBytes() []byte {
 }
 func (msg MsgCreateBrandedToken) ValidateBasic() error {
 	if msg.FromAddress.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "creator can't be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "from_address can't be empty")
 	}
 	if len(msg.Name) <= 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "name can't be empty")
