@@ -64,6 +64,7 @@ func handleMsgCreateBrandedToken(ctx sdk.Context, k Keeper, msg types.MsgCreateB
 			sdk.NewAttribute(sdk.AttributeKeyAction, msg.Type()),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.FromAddress.String()),
 			sdk.NewAttribute(sdk.AttributeKeyAmount, msg.InitialSupply.String()),
+			sdk.NewAttribute(types.AttributeKeyBrandedTokenName, msg.Name),
 		),
 	)
 
@@ -101,6 +102,7 @@ func handleMsgTransferBrandedTokenOwnership(ctx sdk.Context, k Keeper, msg types
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
 			sdk.NewAttribute(sdk.AttributeKeyAction, msg.Type()),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.FromAddress.String()),
+			sdk.NewAttribute(types.AttributeKeyBrandedTokenName, msg.Name),
 		),
 	)
 
@@ -145,6 +147,7 @@ func handleMsgMintBrandedToken(ctx sdk.Context, k Keeper, msg types.MsgMintBrand
 			sdk.NewAttribute(sdk.AttributeKeyAction, msg.Type()),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.FromAddress.String()),
 			sdk.NewAttribute(sdk.AttributeKeyAmount, msg.Amount.String()),
+			sdk.NewAttribute(types.AttributeKeyBrandedTokenName, msg.Name),
 		),
 	)
 
@@ -189,6 +192,7 @@ func handleMsgBurnBrandedToken(ctx sdk.Context, k Keeper, msg types.MsgBurnBrand
 			sdk.NewAttribute(sdk.AttributeKeyAction, msg.Type()),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.FromAddress.String()),
 			sdk.NewAttribute(sdk.AttributeKeyAmount, msg.Amount.String()),
+			sdk.NewAttribute(types.AttributeKeyBrandedTokenName, msg.Name),
 		),
 	)
 
