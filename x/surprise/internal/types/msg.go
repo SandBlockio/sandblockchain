@@ -99,7 +99,7 @@ type MsgMintBrandedToken struct {
 
 var _ sdk.Msg = &MsgMintBrandedToken{}
 
-func NewMsgBrandedTokenMint(owner sdk.AccAddress, name string, amount sdk.Int) MsgMintBrandedToken {
+func NewMsgMintBrandedToken(owner sdk.AccAddress, name string, amount sdk.Int) MsgMintBrandedToken {
 	return MsgMintBrandedToken{
 		FromAddress: owner,
 		Name:        name,
