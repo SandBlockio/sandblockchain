@@ -136,7 +136,7 @@ func handleMsgMintBrandedToken(ctx sdk.Context, k Keeper, msg types.MsgMintBrand
 	}
 
 	//  Update and persist the entity
-	brandedToken.Amount.Add(msg.Amount)
+	brandedToken.Amount = brandedToken.GetAmount().Add(msg.Amount)
 	k.SetBrandedToken(ctx, tokenSlug, brandedToken)
 
 	// Emit the log-event and return
@@ -174,14 +174,19 @@ func handleMsgBurnBrandedToken(ctx sdk.Context, k Keeper, msg types.MsgBurnBrand
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidPubKey, "You are not the owner of that BrandedToken")
 	}
 
-	// Update the coin keeper
+	// Ensure the request does not go beyond 0
+	if msg.Amount.GT(brandedToken.GetAmount()) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidCoins, "Not enough coins on the total supply")
+	}
+
+	// Update the coin keeper - verification to know if user has & enough coins is done by SDK itself
 	_, err = k.CoinKeeper.SubtractCoins(ctx, msg.FromAddress, sdk.NewCoins(sdk.NewCoin(brandedToken.GetName(), msg.Amount)))
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrPanic, "Failure when substracting the coins on the coinKeeper")
 	}
 
 	//  Update and persist the entity
-	brandedToken.Amount.Sub(msg.Amount)
+	brandedToken.Amount = brandedToken.GetAmount().Sub(msg.Amount)
 	k.SetBrandedToken(ctx, tokenSlug, brandedToken)
 
 	// Emit the log-event and return
