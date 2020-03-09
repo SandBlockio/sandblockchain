@@ -36,7 +36,7 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 func GetCmdListBrandedTokens(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "list",
-		Short: "list",
+		Short: "List the branded tokens",
 		// Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -79,7 +79,7 @@ func GetCmdGetBrandedToken(queryRoute string, cdc *codec.Codec) *cobra.Command {
 func GetCmdGetTotalSupply(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "supply",
-		Short: "supply",
+		Short: "Get the total supply across all branded tokens",
 		// Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
