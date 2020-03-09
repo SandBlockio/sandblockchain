@@ -31,17 +31,20 @@ func NewQuerier(k Keeper) sdk.Querier {
 }
 
 func queryTotalSupply(ctx sdk.Context, k Keeper) ([]byte, error){
-	var supply sdk.Int
+	var supply = sdk.NewInt(0)
 
 	// Acquire the iterator and loop
 	iterator := k.GetBrandedTokensIterator(ctx)
 	for ; iterator.Valid(); iterator.Next() {
-		token, _ := k.GetBrandedToken(ctx, string(iterator.Key()))
-		supply.Add(token.Amount)
+		token, err := k.GetBrandedToken(ctx, string(iterator.Key()))
+		if err != nil {
+			continue
+		}
+		supply = supply.Add(token.Amount)
 	}
 
 	// Convert and return
-	res, err := codec.MarshalJSONIndent(k.cdc, supply)
+	res, err := codec.MarshalJSONIndent(k.cdc, supply.Int64())
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
