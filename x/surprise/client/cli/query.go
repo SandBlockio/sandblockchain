@@ -2,16 +2,12 @@ package cli
 
 import (
 	"fmt"
-	"strings"
-
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/sandblockio/sandblockchain/x/surprise/internal/types"
 )
 
@@ -28,11 +24,75 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 	surpriseQueryCmd.AddCommand(
 		flags.GetCommands(
-	// TODO: Add query Cmds
+			GetCmdListBrandedTokens(queryRoute, cdc),
+			GetCmdGetBrandedToken(queryRoute, cdc),
+			GetCmdGetTotalSupply(queryRoute, cdc),
 		)...,
 	)
 
 	return surpriseQueryCmd
 }
 
-// TODO: Add Query Commands
+func GetCmdListBrandedTokens(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "list",
+		Short: "list",
+		// Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/"+types.QueryListBrandedTokens, queryRoute), nil)
+			if err != nil {
+				fmt.Printf("could not get branded tokens\n%s\n", err.Error())
+				return nil
+			}
+
+			var out types.QueryResFetch
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
+}
+
+func GetCmdGetBrandedToken(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "get [name]",
+		Short: "Get the informations about a branded token",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			name := args[0]
+
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s", queryRoute, types.QueryGetBrandedToken, name), nil)
+			if err != nil {
+				fmt.Printf("could not resolve branded token\n%s\n", err.Error())
+				return nil
+			}
+
+			var out types.QueryResFetch
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
+}
+
+func GetCmdGetTotalSupply(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "supply",
+		Short: "supply",
+		// Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryGetTotalSupply), nil)
+			if err != nil {
+				fmt.Printf("could not get branded tokens\n%s\n", err.Error())
+				return nil
+			}
+
+			var out types.QueryResFetch
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
+}
