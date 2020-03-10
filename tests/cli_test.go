@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestGaiaCLIConfig(t *testing.T) {
+func TestCLIConfig(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 	node := fmt.Sprintf("%s:%s", f.RPCAddr, f.Port)

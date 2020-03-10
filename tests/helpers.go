@@ -24,6 +24,7 @@ import (
 
 const (
 	denom  = "sbc"
+	denomStake = "stake" // TODO: change the config to use the same coin (sbc) for coin and stake
 	keyFoo = "foo"
 	keyBar = "bar"
 	DefaultKeyPass = "12345678"
@@ -35,10 +36,12 @@ const (
 var (
 	totalCoins = sdk.NewCoins(
 		sdk.NewCoin(denom, sdk.TokensFromConsensusPower(2000000)),
+		sdk.NewCoin(denomStake, sdk.TokensFromConsensusPower(2000000)),
 	)
 
 	startCoins = sdk.NewCoins(
 		sdk.NewCoin(denom, sdk.TokensFromConsensusPower(2000000)),
+		sdk.NewCoin(denomStake, sdk.TokensFromConsensusPower(2000000)),
 	)
 )
 
@@ -134,14 +137,14 @@ func InitFixtures(t *testing.T) (f *Fixtures) {
 	// Reset the previous state
 	f.UnsafeResetAll()
 
+	// Ensure the local CLI config is containing JSON as output mode
+	f.CLIConfig("output", "json")
+
 	// Reset the previous keys
 	f.KeysDelete(keyFoo)
 	f.KeysDelete(keyBar)
 	f.KeysAdd(keyFoo)
 	f.KeysAdd(keyBar)
-
-	// Ensure the local CLI config is containing JSON as output mode
-	f.CLIConfig("output", "json")
 
 	// Init the local test node with the keyFoo
 	f.GDInit(keyFoo)
@@ -166,31 +169,31 @@ func InitFixtures(t *testing.T) (f *Fixtures) {
 
 // KeysDelete is gaiacli keys delete
 func (f *Fixtures) KeysDelete(name string, flags ...string) {
-	cmd := fmt.Sprintf("%s keys delete --home=%s %s", f.GaiacliBinary, f.GaiacliHome, name)
+	cmd := fmt.Sprintf("%s keys delete --keyring-backend test --home=%s %s", f.GaiacliBinary, f.GaiacliHome, name)
 	executeWrite(f.T, addFlags(cmd, append(append(flags, "-y"), "-f")))
 }
 
 // KeysAdd is gaiacli keys add
 func (f *Fixtures) KeysAdd(name string, flags ...string) {
-	cmd := fmt.Sprintf("%s keys add --home=%s %s", f.GaiacliBinary, f.GaiacliHome, name)
+	cmd := fmt.Sprintf("%s keys add --keyring-backend test --home=%s %s", f.GaiacliBinary, f.GaiacliHome, name)
 	executeWriteCheckErr(f.T, addFlags(cmd, flags), DefaultKeyPass)
 }
 
 // KeysAddRecover prepares gaiacli keys add --recover
 func (f *Fixtures) KeysAddRecover(name, mnemonic string, flags ...string) (exitSuccess bool, stdout, stderr string) {
-	cmd := fmt.Sprintf("%s keys add --home=%s --recover %s", f.GaiacliBinary, f.GaiacliHome, name)
+	cmd := fmt.Sprintf("%s keys add --keyring-backend test --home=%s --recover %s", f.GaiacliBinary, f.GaiacliHome, name)
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), DefaultKeyPass, mnemonic)
 }
 
 // KeysAddRecoverHDPath prepares gaiacli keys add --recover --account --index
 func (f *Fixtures) KeysAddRecoverHDPath(name, mnemonic string, account uint32, index uint32, flags ...string) {
-	cmd := fmt.Sprintf("%s keys add --home=%s --recover %s --account %d --index %d", f.GaiacliBinary, f.GaiacliHome, name, account, index)
+	cmd := fmt.Sprintf("%s keys add --keyring-backend test --home=%s --recover %s --account %d --index %d", f.GaiacliBinary, f.GaiacliHome, name, account, index)
 	executeWriteCheckErr(f.T, addFlags(cmd, flags), DefaultKeyPass, mnemonic)
 }
 
 // KeysShow is gaiacli keys show
 func (f *Fixtures) KeysShow(name string, flags ...string) keys.KeyOutput {
-	cmd := fmt.Sprintf("%s keys show --home=%s %s", f.GaiacliBinary, f.GaiacliHome, name)
+	cmd := fmt.Sprintf("%s keys show --keyring-backend test --home=%s %s", f.GaiacliBinary, f.GaiacliHome, name)
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var ko keys.KeyOutput
 	err := clientkeys.UnmarshalJSON([]byte(out), &ko)
@@ -243,7 +246,7 @@ func (f *Fixtures) AddGenesisAccount(address sdk.AccAddress, coins sdk.Coins, fl
 
 // GenTx is gaiad gentx
 func (f *Fixtures) GenTx(name string, flags ...string) {
-	cmd := fmt.Sprintf("%s gentx --name=%s --home=%s --home-client=%s", f.GaiadBinary, name, f.GaiadHome, f.GaiacliHome)
+	cmd := fmt.Sprintf("%s gentx --keyring-backend test --name=%s --home=%s --home-client=%s", f.GaiadBinary, name, f.GaiadHome, f.GaiacliHome)
 	executeWriteCheckErr(f.T, addFlags(cmd, flags), DefaultKeyPass)
 }
 

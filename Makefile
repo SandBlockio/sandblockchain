@@ -14,6 +14,10 @@ BUILD_FLAGS := -ldflags '$(ldflags)'
 
 all: install
 
+build: go.sum
+		go build $(BUILD_FLAGS) -o build/sbd ./cmd/sbd
+		go build $(BUILD_FLAGS) -o build/sbcli ./cmd/sbcli
+
 install: go.sum
 		go install  $(BUILD_FLAGS) ./cmd/sbd
 		go install  $(BUILD_FLAGS) ./cmd/sbcli
